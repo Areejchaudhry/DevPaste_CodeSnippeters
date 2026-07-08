@@ -1,18 +1,34 @@
 <script setup>
-import {ref} from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-const email = ref('')
-const password = ref('')
-function login(){
-    if(email.value === ''){
-        alert('Email is Required.')
-    }if(password.value === ''){
-        alert('Password is Required.')
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+
+const router = useRouter();
+
+const authStore = useAuthStore();
+
+const form = reactive({
+
+    email:"",
+    password:""
+
+});
+
+const login = async()=>{
+
+    const success = await authStore.login(form);
+
+    if(success){
+
+        router.push("/");
+
     }
-}
+
+};
+
 function gotoregister(){
-    router.push('/register')
+    router.push('/register');
+
 }
 </script>
 
@@ -20,17 +36,26 @@ function gotoregister(){
     <div class="login-container">
         <div class="login-card">
             <h2 class="text-center mb-4">Login Here!</h2>
-            <form>
+            <form @submit.prevent="login">
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control" v-model="email" />
+                    <input type="email" class="form-control" v-model="form.email" />
                 </div>  
                 <div class="mb-4"> 
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" v-model="password" />
+                    <input type="password" class="form-control" v-model="form.password" />
                 </div>     
-                <button class="btn btn-success w-100" @click="login">Login</button>
+                <button type="submit" class="btn btn-success w-100">
+                    Login
+                </button>
             </form>
+
+             <div
+                v-if="authStore.error"
+                class="alert alert-danger mt-3"
+            >
+                {{ authStore.error }}
+            </div>
             <br>
             <h6>Don't have an Account? </h6>
             <button class="btn btn-success w-100" @click="gotoregister">Register here</button>

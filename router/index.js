@@ -5,6 +5,9 @@ import Login from '../src/views/Login.vue'
 import Register from "../src/views/Register.vue"
 import Profile from '../src/views/Profile.vue'
 import createsnippets from '../src/views/CreateSnippet.vue'
+import { useAuthStore } from "../src/stores/authStore";
+import SnippetDetails from "../src/views/SnippetDetails.vue";
+import Favorites from "../src/views/Favourites.vue";
 
 const routes = [
     {
@@ -31,6 +34,18 @@ const routes = [
         path : '/create-snippets' , 
         component: createsnippets
 
+    },
+    {
+    path: "/snippets/:id",
+    component: SnippetDetails
+    },
+    {
+    path: "/edit-snippet/:id",
+    component: createsnippets
+    },
+    {
+    path: "/favorites",
+    component: Favorites
     }
 ]
 
@@ -39,4 +54,35 @@ const router = createRouter({
     routes
 })
 
+router.beforeEach((to, from, next)=>{
+
+    const authStore = useAuthStore();
+
+    const protectedRoutes=[
+
+        "/MySnippets",
+        "/create-snippets",
+        "/myprofile"
+
+    ];
+
+    if(
+
+        protectedRoutes.includes(to.path)
+        &&
+        !authStore.isAuthenticated
+
+    ){
+
+        next("/login");
+
+    }
+
+    else{
+
+        next();
+
+    }
+
+});
 export default router

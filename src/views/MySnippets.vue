@@ -1,34 +1,85 @@
 <script setup>
-import { useRouter } from 'vue-router';
-const router = useRouter()
+import { onMounted, ref, computed , watch} from "vue";
+import { useRouter } from "vue-router";
+import { useSnippetStore } from "../stores/snippetStore";
+import SnippetCard from "../Components/Snippetcard.vue";
+import { useNotificationStore } from "../stores/notificationStore";
+const notification = useNotificationStore();
+const router = useRouter();
+const snippetStore = useSnippetStore();
 
-import { ref } from 'vue'
-import SnippetCard from '../Components/Snippetcard.vue'
 
-const snippets = ref([
-  {
-    id: 1,
-    title: 'Array Methods',
-    language: 'JavaScript',
-    description: 'Useful array methods.',
-    tags: ['javascript', 'array'],
-    visibility: 'Public',
-    createdAt: '2026-06-17'
+
+
+const currentPage = ref(1);
+const snippetsPerPage = 6;
+
+const totalPages = computed(() => {
+  return Math.ceil(
+    snippetStore.filteredMySnippets.length / snippetsPerPage
+  );
+});
+
+const paginatedSnippets = computed(() => {
+  const start = (currentPage.value - 1) * snippetsPerPage;
+  const end = start + snippetsPerPage;
+
+  return snippetStore.filteredMySnippets.slice(start, end);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
   }
-])
+};
 
+const previousPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
+};
+
+watch(
+  () => [snippetStore.search, snippetStore.language],
+  () => {
+    currentPage.value = 1;
+  }
+);
+
+onMounted(async () => {
+
+    await snippetStore.fetchMySnippets();
+
+    await snippetStore.fetchFavorites();
+
+});
 const viewSnippet = (id) => {
-  console.log('View', id)
-}
-
+    router.push(`/snippets/${id}`);
+};
 const editSnippet = (id) => {
-  console.log('Edit', id)
-}
 
-const deleteSnippet = (id) => {
-  console.log('Delete', id)
-}
+    router.push(`/edit-snippet/${id}`);
+};
+const deleteSnippet = async (id) => {
 
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this snippet?"
+    );
+
+    if (!confirmDelete) return;
+
+    const success = await snippetStore.deleteSnippet(id);
+
+    if (success) {
+
+        notification.notify(
+            "Snippet deleted successfully!",
+            "success"
+        );
+
+    }
+
+};
 </script>
 
 <template>
@@ -45,11 +96,11 @@ const deleteSnippet = (id) => {
         <div class="card-body">
             <div class="row g-3">
                 <div class="col-md-8">
-                    <input type="text" class="form-control search-input" placeholder="Search snippets..."  />
+                    <input class="form-control" placeholder="Search snippets..." v-model="snippetStore.search">
                 </div>
                 <div class="col-md-4">
-                    <select class="form-select search-input">
-                        <option selected>All Languages</option>
+                    <select class="form-select search-input" v-model="snippetStore.language">
+                        <option value="">All Languages</option>
                         <option value="HTML">HTML</option>
                         <option value="CSS">CSS</option>
                         <option value="JavaScript">JavaScript</option>
@@ -65,20 +116,71 @@ const deleteSnippet = (id) => {
         </div>
 
     </div>
-    <div class="row">
+    <div v-if="snippetStore.loading" class="text-center">
+        Loading snippets...
+    </div>
+    <div v-else class="row">
         <div
         class="col-md-4 mb-3"
-        v-for="snippet in snippets"
-        :key="snippet.id"
+        v-for="snippet in paginatedSnippets"
+        :key="snippet._id"
         >
             <SnippetCard
                 :snippet="snippet"
+                :showEditDelete="true"
                 @view="viewSnippet"
                 @edit="editSnippet"
                 @delete="deleteSnippet"
             />
         </div>
     </div>
+
+    <nav
+        v-if="totalPages > 1"
+        class="d-flex justify-content-center mt-4"
+        >
+        <ul class="pagination">
+
+            <li
+                class="page-item"
+                :class="{ disabled: currentPage === 1 }"
+                >
+                <button
+                    class="page-link"
+                    @click="previousPage"
+                >
+                    Previous
+                </button>
+            </li>
+
+            <li
+                v-for="page in totalPages"
+                :key="page"
+                class="page-item"
+                :class="{ active: currentPage === page }"
+                >
+                <button
+                    class="page-link"
+                    @click="currentPage = page"
+                >
+                    {{ page }}
+                </button>
+            </li>
+
+            <li
+                class="page-item"
+                :class="{ disabled: currentPage === totalPages }"
+                >
+                <button
+                    class="page-link"
+                    @click="nextPage"
+                >
+                    Next
+                </button>
+            </li>
+
+        </ul>
+    </nav>
 
 </div>
 

@@ -25,17 +25,17 @@
                     </div>
                     <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                         <h6 class="text-uppercase fw-bold mb-4">Technologies</h6>
-                        <p><router-link to="/" class="text-reset"> Vue.js</router-link></p>
-                        <p><router-link to="/" class="text-reset"> Node.js</router-link></p>
-                        <p><router-link to="/" class="text-reset"> Express.js</router-link></p>
-                        <p><router-link to="/" class="text-reset"> Bootstrap</router-link></p>
+                        <p><a href="https://vuejs.org/" target="_blank"  rel="noopener noreferrer"  class="text-reset" >Vue.js </a></p>
+                        <p><a  href="https://nodejs.org/" target="_blank"  rel="noopener noreferrer"  class="text-reset" >Node.js </a></p>
+                        <p><a  href="https://expressjs.com/" target="_blank"  rel="noopener noreferrer"  class="text-reset" >Express.js </a></p>
+                        <p><a href="https://getbootstrap.com/" target="_blank"  rel="noopener noreferrer"  class="text-reset" >Bootstrap </a></p>
                     </div>
                     <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                         <h6 class="text-uppercase fw-bold mb-4">Useful Links</h6>
                         <p><router-link to="/" class="text-reset"> Home</router-link></p>
-                        <p><router-link to="/dashboard" class="text-reset">Dashboard</router-link></p>
-                        <p><router-link to="/MySnippets" class="text-reset">My Snippets</router-link></p>
-                        <p><router-link to="/favourites" class="text-reset">Favourites</router-link></p>
+                        <p><router-link to="/login" class="text-reset">Login</router-link></p>
+                        <p><router-link to="/register" class="text-reset">Register</router-link></p>
+                        
                     </div>
 
                     <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">

@@ -1,4 +1,45 @@
 <script setup>
+import { useAuthStore } from "../stores/authStore.js";
+import { useSnippetStore } from "../stores/snippetStore";
+import { useThemeStore } from "../stores/themeStore";
+import { useRouter } from "vue-router";
+import { useNotificationStore } from "../stores/notificationStore";
+const notification = useNotificationStore();
+const authStore = useAuthStore();
+const snippetStore = useSnippetStore();
+const router = useRouter();
+const themeStore = useThemeStore();
+
+const logout = () => {
+
+    authStore.logout();
+
+    notification.notify(
+        "Logged out successfully!",
+        "success"
+    );
+
+    router.push("/login");
+
+};
+
+const searchSnippets = async () => {
+
+    await router.push("/");
+
+    setTimeout(() => {
+
+        const section = document.getElementById("latest-snippets");
+
+        if (section) {
+            section.scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+
+    }, 100);
+
+};
 </script>
 
 <template>
@@ -9,32 +50,98 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div>
-                <form class="d-flex search-form">
-                    <input class="form-control me-2" type="search" placeholder="Search snippets..." >
-                    <button class="btn btn-success" type="submit">Search</button>
+                <form
+                    class="d-flex search-form"
+                    @submit.prevent="searchSnippets"
+                >
+                    <input
+                        class="form-control me-2"
+                        type="search"
+                        placeholder="Search snippets..."
+                        v-model="snippetStore.search"
+                    >
+
+                    <button
+                        class="btn btn-success"
+                        type="submit"
+                    >
+                        Search
+                    </button>
                 </form>
             </div>
             <div class="collapse navbar-collapse" id="navbarNav" >
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/">Home</router-link>
+                        <router-link  class="nav-link" to="/">Home</router-link>
+                    </li>
+                    <li
+                        v-if="authStore.isAuthenticated"
+                        class="nav-item"
+                    >
+                            <router-link
+                                class="nav-link"
+                                to="/myprofile"
+                            >
+                                My Profile
+                            </router-link>
+                    </li>
+                    <li
+                        v-if="authStore.isAuthenticated"
+                        class="nav-item"
+                    >
+                        <router-link
+                            class="nav-link"
+                            to="/MySnippets"
+                        >
+                            My Snippets
+                        </router-link>
+                    </li>
+                    <li
+                        v-if="authStore.isAuthenticated"
+                        class="nav-item"
+                    >
+                        <router-link
+                            class="nav-link"
+                            to="/favorites"
+                        >
+                            Favorites
+                        </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/myprofile">My Profile</router-link>
+
+                        <router-link
+                            v-if="!authStore.isAuthenticated"
+                            class="nav-link"
+                            to="/login"
+                        >
+                            Login
+                        </router-link>
+
+                        <a
+                            v-else
+                            class="nav-link"
+                            href="#"
+                            @click.prevent="logout"
+                        >
+                            Logout
+                        </a>
+
                     </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/MySnippets">My Snippets</router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/favorites">Favorites</router-link>
-                    </li>
-                    <li class="nav-item">
-                        <router-link class="nav-link" to="/login">Login</router-link>
+                    <li>
+                        <button
+                            class="btn btn-outline-light ms-3"
+                            @click="themeStore.toggleTheme"
+                        >
+                            {{ themeStore.isDark ? "☀️ Light" : "🌙 Dark" }}
+                        </button>
                     </li>
                 </ul>
             </div>
         </div>
+        
     </nav>
+
+
 </template>
 
 

@@ -1,41 +1,29 @@
 <script setup>
-import {ref} from 'vue'
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const cpassword = ref('')
 
-function register(){
-    if(name.value === ''){
-        alert('Name is Required.')
-        return
+import { reactive } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/authStore";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const form = reactive({
+    name: "",
+    email: "",
+    password: ""
+});
+
+const register = async () => {
+
+    const success = await authStore.register(form);
+
+    if(success){
+
+        router.push("/");
+
     }
-    if(email.value === ''){
-        alert('Email is Required.')
-        return
-    }
-    if(!email.value.includes('@')){
-        alert('Incorrect Email Format.')
-        return
-    }
-    if(password.value === ''){
-        alert('Password is Required.')
-        return
-    }
-    if(password.value.length < 8){
-        alert('Password must be at least 8 characters.')
-        return
-    }
-    if(cpassword.value === ''){
-        alert('Confirm Password is Required.')
-        return
-    }
-    if(password.value !== cpassword.value){
-        alert('Passwords do not match.')
-        return
-    }
-    alert('Registration Successful!')
-}
+
+};
 </script>
 
 <template>
@@ -45,22 +33,32 @@ function register(){
             <form @submit.prevent = "register">
                 <div class="mb-3">
                     <label class="form-label">Name</label>
-                    <input type="text" class="form-control" v-model="name" />
+                    <input type="text" class="form-control" v-model="form.name" />
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control" v-model="email" />
+                    <input type="email" class="form-control" v-model="form.email" />
                 </div>  
                 <div class="mb-4"> 
                     <label class="form-label">Password</label>
-                    <input type="password" class="form-control" v-model="password" />
+                    <input type="password" class="form-control" v-model="form.password" />
                 </div>  
                 <div class="mb-4"> 
                     <label class="form-label">Confirm Password</label>
-                    <input type="password" class="form-control" v-model="cpassword" />
+                    
                 </div>   
-                <button class="btn btn-success w-100">Register</button>
+                <button type="submit" class="btn btn-success w-100">
+                    Register
+                </button>
             </form>
+
+
+            <div
+                v-if="authStore.error"
+                class="alert alert-danger mt-3"
+            >
+                {{ authStore.error }}
+            </div>
         </div>   
     </div>     
 </template>

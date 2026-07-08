@@ -1,14 +1,83 @@
 <script setup>
-import { ref } from 'vue';
-const name = ref('Areej')
-const email = ref('')
-const password = ref('')
-const cpassword = ref('')
-const joined_date = ref('3/4/2022')
-const totalsnippets = ref('23')
-const fav = ref('4')
 
+import { onMounted, ref } from "vue";
+import { useAuthStore } from "../stores/authStore";
+import { useSnippetStore } from "../stores/snippetStore";
+
+const authStore = useAuthStore();
+const snippetStore = useSnippetStore();
+
+import { reactive } from "vue";
+
+const form = reactive({
+
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+
+});
+const joinedDate = ref("");
+const totalSnippets = ref(0);
+
+onMounted(async () => {
+
+    await authStore.getProfile();
+
+    await snippetStore.fetchMySnippets();
+
+    form.name = authStore.user.name;
+
+    form.email = authStore.user.email;
+
+    totalSnippets.value =
+        snippetStore.mySnippets.length;
+
+    joinedDate.value =
+        new Date(authStore.user.createdAt)
+            .toLocaleDateString();
+
+});
+
+const saveProfile = async () => {
+
+    if (
+
+        form.password &&
+        form.password !== form.confirmPassword
+
+    ) {
+
+        notification.notify(
+            "Passwords do not match.",
+            "danger"
+        );
+
+        return;
+
+    }
+
+    const success = await authStore.updateProfile({
+
+        name: form.name,
+        email: form.email,
+        password: form.password
+
+    });
+
+    if (success) {
+
+        notification.notify("Profile updated successfully!", "success")
+
+        form.password = "";
+        form.confirmPassword = "";
+
+    }
+
+};
 </script>
+
+
 
 <template>
     <div class="container mt-5 main-form">
@@ -16,22 +85,22 @@ const fav = ref('4')
             <div class="col-lg-4">
                 <div class='profile-card'>
                     <img src='../Assets/profile.webp' alt='Profile Image' class="profile-img">
-                    <h1>{{name}}</h1>
-                    <p class='title'>Joined on : {{ joined_date }}</p>
-                    <p>Total Snippets: {{ totalsnippets }}</p>
-                    <p>Favourites: {{ fav }}</p>
+                    <h1>{{form.name}}</h1>
+                    <p class='title'>Joined on : {{ joinedDate }}</p>
+                    <p>Total Snippets: {{ totalSnippets }}</p>
+                    <p>Favourites: 0</p>
                 </div>               
             </div>
             <div class="col-lg-8">
-                <form class="row g-3 ">
+                <form class="row g-3 " @submit.prevent="saveProfile">
                     <h3>Edit Your Profile</h3>
                     <div class="col-md-6">
                         <label  class="form-label">Name</label>
-                        <input type="text" class="form-control" v-model="name">
+                        <input type="text" class="form-control"  v-model="form.name">
                     </div>
                     <div class="col-md-6">
                         <label  class="form-label">Email</label>
-                        <input type="email" class="form-control" v-model="email">
+                        <input type="email" class="form-control"  v-model="form.email">
                     </div>
                     <div class="col-12">
                         <label  class="form-label">Password</label>
