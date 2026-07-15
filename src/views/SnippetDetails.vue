@@ -3,6 +3,8 @@
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useSnippetStore } from "../stores/snippetStore";
+import { useNotificationStore } from "../stores/notificationStore";
+const notification = useNotificationStore();
 
 const route = useRoute();
 
@@ -20,7 +22,10 @@ const copyCode=()=>{
         snippetStore.currentSnippet.code
     );
 
-    alert("Code copied!");
+    notification.notify(
+        "Code copied successfully!",
+        "success"
+    );
 
 }
 

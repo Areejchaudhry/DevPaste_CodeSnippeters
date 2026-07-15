@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, computed , watch } from "vue";
+import { onMounted, ref, computed , watch , onBeforeUnmount} from "vue";
 import { useRouter } from "vue-router";
 import { useSnippetStore } from "../stores/snippetStore";
 import SnippetCard from "../Components/Snippetcard.vue";
@@ -8,7 +8,9 @@ const router = useRouter();
 import { useAuthStore } from "../stores/authStore";
 const authStore = useAuthStore();
 
-
+onBeforeUnmount(() => {
+    snippetStore.search = "";
+});
 
 
 const popularTopics = [

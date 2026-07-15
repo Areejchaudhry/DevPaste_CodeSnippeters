@@ -3,6 +3,8 @@
 import { onMounted, ref } from "vue";
 import { useAuthStore } from "../stores/authStore";
 import { useSnippetStore } from "../stores/snippetStore";
+import { useNotificationStore } from "@/stores/notificationStore";
+const notification = useNotificationStore();
 
 const authStore = useAuthStore();
 const snippetStore = useSnippetStore();
@@ -19,19 +21,22 @@ const form = reactive({
 });
 const joinedDate = ref("");
 const totalSnippets = ref(0);
+const totalfav = ref(0);
 
 onMounted(async () => {
 
     await authStore.getProfile();
 
     await snippetStore.fetchMySnippets();
+    await snippetStore.fetchFavorites();
 
     form.name = authStore.user.name;
 
     form.email = authStore.user.email;
 
-    totalSnippets.value =
-        snippetStore.mySnippets.length;
+    totalSnippets.value =snippetStore.mySnippets.length;
+
+    totalfav.value = snippetStore.favorites.length;    
 
     joinedDate.value =
         new Date(authStore.user.createdAt)
@@ -69,8 +74,8 @@ const saveProfile = async () => {
 
         notification.notify("Profile updated successfully!", "success")
 
-        form.password = "";
-        form.confirmPassword = "";
+        form.password = form.password;
+        form.confirmPassword = form.confirmPassword;
 
     }
 
@@ -88,7 +93,7 @@ const saveProfile = async () => {
                     <h1>{{form.name}}</h1>
                     <p class='title'>Joined on : {{ joinedDate }}</p>
                     <p>Total Snippets: {{ totalSnippets }}</p>
-                    <p>Favourites: 0</p>
+                    <p>Favourites: {{ totalfav }}</p>
                 </div>               
             </div>
             <div class="col-lg-8">
@@ -104,11 +109,11 @@ const saveProfile = async () => {
                     </div>
                     <div class="col-12">
                         <label  class="form-label">Password</label>
-                        <input type="password" class="form-control" v-model="password">
+                        <input type="password" class="form-control" v-model="form.password">
                     </div>
                     <div class="col-12">
                         <label  class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" v-model="cpassword">
+                        <input type="password" class="form-control" v-model="form.confirmPassword">
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-success w-100">Save Changes</button>

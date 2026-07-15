@@ -67,11 +67,11 @@ const deleteSnippet = async (id) => {
             :key="snippet._id"
         >
 
+            
             <SnippetCard
                 :snippet="snippet"
+                :showEditDelete="false"
                 @view="viewSnippet"
-                @edit="editSnippet"
-                @delete="deleteSnippet"
             />
 
         </div>

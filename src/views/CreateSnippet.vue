@@ -2,6 +2,8 @@
 import { onMounted, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSnippetStore } from "../stores/snippetStore";
+import { useNotificationStore } from "../stores/notificationStore";
+const notification = useNotificationStore();
 
 const router = useRouter();
 const route = useRoute();

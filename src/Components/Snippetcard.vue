@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import { useSnippetStore } from "../stores/snippetStore";
 import Toast from "./Toaster.vue";
 import { useNotificationStore } from "../stores/notificationStore";
@@ -30,14 +29,18 @@ const shareSnippet = async (id) => {
 
 };
 
-const copyCode = async (code) => {
-  try {
-    await navigator.clipboard.writeText(code);
-    toastRef.value.showToast("✅ Code copied successfully!");
-  } catch (err) {
-    toastRef.value.showToast("❌ Failed to copy code.");
-  }
-};
+const copyCode=()=>{
+
+    navigator.clipboard.writeText(
+        snippetStore.currentSnippet.code
+    );
+
+    notification.notify(
+        "Code copied successfully!",
+        "success"
+    );
+
+}
 
 defineProps({
   snippet: {

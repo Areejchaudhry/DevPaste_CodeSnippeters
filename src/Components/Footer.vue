@@ -1,16 +1,7 @@
 <script></script>
 <template>
     <footer class="text-center text-lg-start bg-body-tertiary text-muted footer-main">
-        <section >
-            <div>
-                <a href="https://facebook.com/" class="me-4 text-reset"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://twitter.com/" class="me-4 text-reset"><i class="fab fa-twitter"></i></a>
-                <a href="https://google.com/" class="me-4 text-reset"><i class="fab fa-google"></i></a>
-                <a href="https://instagram.com/" class="me-4 text-reset"><i class="fab fa-instagram"></i></a>
-                <a href="https://linkedin.com/" class="me-4 text-reset"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/" class="me-4 text-reset"><i class="fab fa-github"></i></a>
-            </div>
-        </section>
+        
         <section>
             <div class="container text-center text-md-start mt-5">
                 <div class="row mt-3">

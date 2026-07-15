@@ -14,16 +14,58 @@ const form = reactive({
 
 });
 
-const login = async()=>{
+const errors = reactive({
+    email: "",
+    password: ""
+});
 
-    const success = await authStore.login(form);
+const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+};
 
-    if(success){
+const validateForm = () => {
 
-        router.push("/");
+    errors.email = "";
+    errors.password = "";
 
+    let isValid = true;
+
+    // Email
+    if (!form.email.trim()) {
+        errors.email = "Email is required.";
+        isValid = false;
+    }
+    else if (!isValidEmail(form.email)) {
+        errors.email = "Please enter a valid email.";
+        isValid = false;
     }
 
+    // Password
+    if (!form.password) {
+        errors.password = "Password is required.";
+        isValid = false;
+    }
+    else if (form.password.length < 6) {
+        errors.password = "Password must be at least 6 characters.";
+        isValid = false;
+    }
+
+    return isValid;
+};
+
+const login = async () => {
+
+    if (!validateForm()) return;
+
+    const success = await authStore.login({
+        email: form.email.trim(),
+        password: form.password
+    });
+
+    if (success) {
+        router.push("/");
+    }
 };
 
 function gotoregister(){
@@ -40,10 +82,12 @@ function gotoregister(){
                 <div class="mb-3">
                     <label class="form-label">Email</label>
                     <input type="email" class="form-control" v-model="form.email" />
+                    <small class="text-danger">{{ errors.email }}</small>
                 </div>  
                 <div class="mb-4"> 
                     <label class="form-label">Password</label>
                     <input type="password" class="form-control" v-model="form.password" />
+                    <small class="text-danger">{{ errors.password }}</small>
                 </div>     
                 <button type="submit" class="btn btn-success w-100">
                     Login

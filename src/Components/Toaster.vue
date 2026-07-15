@@ -38,7 +38,7 @@ watch(
         if(!toast){
 
             toast = new Toast(toastElement.value,{
-                delay:2500
+                delay:3500
             });
 
         }
@@ -51,7 +51,7 @@ watch(
 
                 notification.hide();
 
-            },2500);
+            },3500);
 
         }
 
