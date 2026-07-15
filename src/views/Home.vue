@@ -3,6 +3,7 @@ import { onMounted, ref, computed , watch , onBeforeUnmount} from "vue";
 import { useRouter } from "vue-router";
 import { useSnippetStore } from "../stores/snippetStore";
 import SnippetCard from "../Components/Snippetcard.vue";
+import heroImage from '@/Assets/coding.jpg'
 const router = useRouter();
 
 import { useAuthStore } from "../stores/authStore";
@@ -140,7 +141,7 @@ onMounted(async () => {
                 </div>
             </div>
             <div class="col-lg-9">
-                <div class="hero-section">
+                <div class="hero-section" :style="{ backgroundImage: `url(${heroImage})` }">
                     <div class="overlay">
                         <h1>Save, Organize & Share Code</h1>
                         <p>DevPaste helps students manage code snippets and share with others.</p>
@@ -244,9 +245,6 @@ onMounted(async () => {
 .hero-section {
 
   height: 500px;
-
-  background-image: url('C:\Users\Admin\OneDrive\Desktop\VueProject\DevPaste\DEVPASTE\src\Assets\coding.jpg');
-
   background-size: cover;
   background-position: center;
 
